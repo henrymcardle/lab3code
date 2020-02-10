@@ -279,23 +279,54 @@ void loop()
         ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1550, 1600);
 */
         //ui_Left_Motor_Speed = 1800;
-        //ui_Right_Motor_Speed = 1800;
+        //ui_Right_Motor_Speed = 1800; 
+        
+        
+        
+  bool MiddleLight = (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  bool LeftLight = (ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  bool RightLight = (ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+  
 
-      //GOING STRAIGHT
-       if ((ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) && (ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)))
+      //GOING STRAIGHT - ALL ON WHITE
+       if (LeftLight == 1 && MiddleLight == 1 && RightLight == 1)
          {
          ui_Left_Motor_Speed = 1700;
         ui_Right_Motor_Speed = 1700;
 
          }
 
-        
-         else if (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)){
+        // GOING STRAIGHT - ONLY MIDDLE ON WHITE
+         else if (MiddleLight == 1){
           ui_Left_Motor_Speed = 1600;
           ui_Right_Motor_Speed = 1600;
-         }                                                                                                                                                              
-
+         }        
          
+          // RIGHT Tracker on White - TURN LEFT
+         else if (RightLight == 1)
+         {
+          ui_Right_Motor_Speed = 1500;
+          ui_Left_Motor_Speed = 1900;
+         }   
+          // LEFT Tracker on White - TURN RIGHT
+          else if (LeftLight == 1)
+         {
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1900;
+         }    
+         
+          // TRACK ENDS - ALL ON BLACK, MOTORS STOP   
+         else {
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500;
+         }
+         
+         
+         
+         
+         
+         // Scrapped code
+        
      /*   //TURNING RIGHT
          else if ((ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)) && (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)))
          {
@@ -308,32 +339,18 @@ void loop()
           ui_Right_Motor_Speed -= 45;
           ui_Left_Motor_Speed += 25;
          }
-         */
-         else if ((ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)))
-         {
-          ui_Right_Motor_Speed = 1500;
-          ui_Left_Motor_Speed = 1900;
-         }        
-          else if ((ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance)))
-         {
-          ui_Left_Motor_Speed = 1500;
-          ui_Right_Motor_Speed = 1900;
-         }        
-      /*   else if (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+          
+        else if (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
          {
          ui_Left_Motor_Speed = constrain(ui_Motors_Speed + ui_Left_Motor_Offset, 1600, 2100) - 250;
          ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1600, 2100) - 250;
-         }
+         } 
+         
          */
 
-         else {
-          ui_Left_Motor_Speed = 1500;
-          ui_Right_Motor_Speed = 1500;
-         }
 
 
-
-
+      
         if(bt_Motors_Enabled)
         {
           servo_LeftMotor.writeMicroseconds(ui_Left_Motor_Speed);
