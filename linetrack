@@ -100,7 +100,7 @@ unsigned int ui_Left_Motor_Speed;
 unsigned int ui_Right_Motor_Speed;
 long l_Left_Motor_Position;
 long l_Right_Motor_Position;
-
+int counter = 0;                                        //counter
 unsigned long ul_3_Second_timer = 0;
 unsigned long ul_Display_Time;
 unsigned long ul_Calibration_Time;
@@ -278,22 +278,22 @@ void loop()
     /*    ui_Left_Motor_Speed = constrain(ui_Motors_Speed + ui_Left_Motor_Offset, 1550, 1600);
         ui_Right_Motor_Speed = constrain(ui_Motors_Speed + ui_Right_Motor_Offset, 1550, 1600);
 */
+
+
         //ui_Left_Motor_Speed = 1800;
         //ui_Right_Motor_Speed = 1800; 
         
-        
-        
-  bool MiddleLight = (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
-  bool LeftLight = (ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
-  bool RightLight = (ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance))
+       
+  bool MiddleLight = (ui_Middle_Line_Tracker_Data < (ui_Middle_Line_Tracker_Dark - ui_Line_Tracker_Tolerance));
+  bool LeftLight = (ui_Left_Line_Tracker_Data < (ui_Left_Line_Tracker_Dark - ui_Line_Tracker_Tolerance));
+  bool RightLight = (ui_Right_Line_Tracker_Data < (ui_Right_Line_Tracker_Dark - ui_Line_Tracker_Tolerance));
   
 
-      //GOING STRAIGHT - ALL ON WHITE
+       //GOING STRAIGHT - ALL ON WHITE
        if (LeftLight == 1 && MiddleLight == 1 && RightLight == 1)
          {
          ui_Left_Motor_Speed = 1700;
         ui_Right_Motor_Speed = 1700;
-
          }
 
         // GOING STRAIGHT - ONLY MIDDLE ON WHITE
@@ -315,10 +315,27 @@ void loop()
           ui_Right_Motor_Speed = 1900;
          }    
          
-          // TRACK ENDS - ALL ON BLACK, MOTORS STOP   
-         else {
+          // TRACK BREAK  - ALL ON BLACK, MOTORS MOVE FORWARD TILL IT REACHES LINE AGAIN   
+         else if ((MiddleLight == 0) && (RightLight == 0) && (LeftLight == 0) && (counter == 0)){ 
+          ui_Left_Motor_Speed = 1600;
+          ui_Right_Motor_Speed = 1600;
+          counter++;
+         }
+         
+         //TRACK ENDS AT PICKUP POINT - ROBOT STOPS
+         else if ((MiddleLight == 0) && (RightLight == 0) && (LeftLight == 0) && (counter == 1)){ 
           ui_Left_Motor_Speed = 1500;
           ui_Right_Motor_Speed = 1500;
+          counter++;
+         }
+         
+         //ROBOT ARM EXTENDS AND OPENS
+         else if ((MiddleLight == 0) && (RightLight == 0) && (LeftLight == 0) && (counter == 2)){ 
+          ui_Left_Motor_Speed = 1500;
+          ui_Right_Motor_Speed = 1500;
+          ci_Arm_Servo_Extended = 120;
+          ci_Grip_Motor_Open = 140;
+          counter++;
          }
          
          
